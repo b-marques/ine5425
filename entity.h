@@ -1,4 +1,7 @@
-class : Entity
+#ifndef ENTITY_H
+#define ENTITY_H
+
+class Entity
 {
 	public:
     Entity();
@@ -16,3 +19,5 @@ class : Entity
  		int dispose_time_;
  		
 }
+
+#endif //ENTITY_H

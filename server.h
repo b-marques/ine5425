@@ -1,4 +1,7 @@
-class : Server
+#ifndef SERVER_H
+#define SERVER_H
+
+class Server
 {
   public:
     Server();
@@ -13,3 +16,5 @@ class : Server
     bool state_;
 
 }
+
+#endif //SERVER_H

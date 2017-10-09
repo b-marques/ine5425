@@ -1,3 +1,6 @@
+#ifndef SYSTEM_CORE_H
+#define SYSTEM_CORE_H
+
 #include "employee.h"
 #include <list>
 
@@ -14,3 +17,5 @@ class SystemCore
     std::list<Client> clients;  
     Employee _employee[2];
 }
+
+#endif //SYSTEM_CORE_H
