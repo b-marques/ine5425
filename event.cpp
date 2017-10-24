@@ -1,7 +1,7 @@
 #include "event.h"
 
-Event::Event(Type type, int time, Entity::Type entity_type) :
-    type_(type), time_(time), entity_type_(entity_type), server_type_(static_cast<Server::Type>(entity_type))
+Event::Event(Type type, int time, Entity entity, Server server) :
+    type_(type), time_(time), entity_(entity), server_(server)
 {
 }
 

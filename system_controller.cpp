@@ -23,6 +23,10 @@ void SystemController::start(Ui::MainWindow *ui)
     ui_ = ui;
     config_initial_state();
     create_initial_events();
+    while(!calendar_.empty()){
+        process_events();
+    }
+    std::cout << "finished" << std::endl;
 }
 
 void SystemController::config_initial_state()
@@ -59,17 +63,43 @@ void SystemController::config_initial_state()
 
 void SystemController::create_initial_events()
 {
-    add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL, 0, Entity::ONE)));
-    add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL, 0, Entity::TWO)));
-    add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER, 0, Entity::ONE)));
-    add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER, 0, Entity::TWO)));
-    add_event(std::make_shared<Event>(Event(Event::TEF_SERVER, 0, Entity::ONE)));
-    add_event(std::make_shared<Event>(Event(Event::TEF_SERVER, 0, Entity::TWO)));
+
+    add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL,
+                                            0,
+                                            std::make_shared<Entity>(Entity(Entity::ONE)),
+                                            nullptr)));
+
+    add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL,
+                                            0,
+                                            std::make_shared<Entity>(Entity(Entity::TWO)),
+                                            nullptr)));
+
+    add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER,
+                                            0,
+                                            std::make_shared<Entity>(Entity(Entity::ONE)),
+                                            nullptr)));
+
+    add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER,
+                                            0,
+                                            std::make_shared<Entity>(Entity(Entity::TWO)),
+                                            nullptr)));
+
+    add_event(std::make_shared<Event>(Event(Event::TEF_SERVER,
+                                            0,
+                                            nullptr,
+                                            server_.at(0))));
+
+    add_event(std::make_shared<Event>(Event(Event::TEF_SERVER,
+                                            0,
+                                            nullptr,
+                                            server_.at(1))));
 }
 
-void SystemController::next_event()
+void SystemController::process_events()
 {
-
+    std::shared_ptr<Event> event = calendar_.front();
+    event->process();
+    calendar_.erase(calendar_.begin());
 }
 
 bool cmp_event(std::shared_ptr<Event> event_a, std::shared_ptr<Event> event_b)
@@ -79,11 +109,11 @@ bool cmp_event(std::shared_ptr<Event> event_a, std::shared_ptr<Event> event_b)
 
 void SystemController::add_event(std::shared_ptr<Event> event)
 {
+    //Adiciona o evento
     calendar_.push_back(event);
+    //Reordena os eventos de acordo com o tempo
     std::sort(calendar_.begin(), calendar_.end(), cmp_event);
 }
-
-
 
 std::vector<double> SystemController::extract_tec_entity_args(Entity::Type entity_type, RandomFunctionsData::Type function_type)
 {

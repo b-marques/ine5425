@@ -18,7 +18,7 @@ public:
     void start(Ui::MainWindow *ui);
     void config_initial_state();
     void create_initial_events();
-    void next_event();
+    void process_events();
     void add_event(std::shared_ptr<Event> event);
     std::vector<double> extract_tec_entity_args(Entity::Type entity_type, RandomFunctionsData::Type function_type);
     std::vector<double> extract_ts_server_args(Server::Type server_type, RandomFunctionsData::Type function_type);

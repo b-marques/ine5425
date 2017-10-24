@@ -9,7 +9,7 @@ public:
         TWO = 1
     };
 
-    Entity();
+    Entity(Entity::Type type);
     ~Entity();
 
 private:
