@@ -15,7 +15,7 @@ public:
         ENTITY_DISPOSE
     };
 
-    Event(Type type, int time, Entity entity, Server server);
+    Event(Type type, int time, std::shared_ptr<Entity> entity, std::shared_ptr<Server> server);
     void process();
     int time() const;
 
