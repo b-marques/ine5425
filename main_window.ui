@@ -84,7 +84,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="const_0_ent_1">
       <widget class="QWidget" name="const_ent_1" native="true">
@@ -1875,7 +1875,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="const_0_server_2">
       <widget class="QWidget" name="const_server_2" native="true">
@@ -3718,7 +3718,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="const_0_server_5">
       <widget class="QWidget" name="const_server_5" native="true">
@@ -4875,7 +4875,7 @@
      <x>0</x>
      <y>0</y>
      <width>889</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

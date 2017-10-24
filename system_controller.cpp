@@ -23,9 +23,9 @@ void SystemController::start(Ui::MainWindow *ui)
     ui_ = ui;
     config_initial_state();
     create_initial_events();
-    while(!calendar_.empty()){
-        process_events();
-    }
+//    while(!calendar_.empty()){
+//        process_events();
+//    }
     std::cout << "finished" << std::endl;
 }
 
@@ -63,25 +63,17 @@ void SystemController::config_initial_state()
 
 void SystemController::create_initial_events()
 {
+    entities_.push_back(std::make_shared<Entity>(Entity(Entity::ONE)));
+    entities_.push_back(std::make_shared<Entity>(Entity(Entity::TWO)));
 
     add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL,
                                             0,
-                                            std::make_shared<Entity>(Entity(Entity::ONE)),
+                                            entities_.at(0),
                                             nullptr)));
 
     add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL,
                                             0,
-                                            std::make_shared<Entity>(Entity(Entity::TWO)),
-                                            nullptr)));
-
-    add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER,
-                                            0,
-                                            std::make_shared<Entity>(Entity(Entity::ONE)),
-                                            nullptr)));
-
-    add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER,
-                                            0,
-                                            std::make_shared<Entity>(Entity(Entity::TWO)),
+                                            entities_.at(1),
                                             nullptr)));
 
     add_event(std::make_shared<Event>(Event(Event::TEF_SERVER,
@@ -98,7 +90,37 @@ void SystemController::create_initial_events()
 void SystemController::process_events()
 {
     std::shared_ptr<Event> event = calendar_.front();
-    event->process();
+
+    switch (event->type()){
+    case Event::ENTITY_ARRIVAL:
+    {
+        event->entity()->arrival_time(event->time());
+        add_event(std::make_shared<Event>(Event(Event::ARRIVAL_AT_SERVER,time_,entity_,server_)));
+        add_event(std::make_shared<Event>(Event(Event::ENTITY_ARRIVAL,time_+1,std::make_shared<Entity>)));
+        break;
+    }
+    case Event::ARRIVAL_AT_SERVER:
+    {
+
+        break;
+    }
+    case Event::TEF_SERVER:
+    {
+        break;
+    }
+    case Event::TF_SERVER:
+    {
+        break;
+    }
+    case Event::ENTITY_DISPOSE:
+    {
+        break;
+    }
+    default:
+        break;
+    }
+
+
     calendar_.erase(calendar_.begin());
 }
 

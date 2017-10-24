@@ -12,6 +12,10 @@ public:
     Entity(Entity::Type type);
     ~Entity();
 
+    void arrival_time(int arrival_time);
+    void service_time(int service_time);
+    void dispose_time(int dispose_time);
+
 private:
     Type type_;
     int arrival_time_;

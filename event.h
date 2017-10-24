@@ -16,8 +16,10 @@ public:
     };
 
     Event(Type type, int time, std::shared_ptr<Entity> entity, std::shared_ptr<Server> server);
-    void process();
+    Type type() const;
     int time() const;
+    std::shared_ptr<Entity> entity() const;
+    std::shared_ptr<Server> server() const;
 
 private:
     Type type_;
