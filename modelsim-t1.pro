@@ -44,3 +44,6 @@ FORMS += \
     main_window.ui
 
 CONFIG += c++14
+
+RESOURCES += \
+    images.qrc

@@ -12,16 +12,27 @@ public:
     Entity(Entity::Type type);
     ~Entity();
 
-    void arrival_time(int arrival_time);
-    void service_time(int service_time);
-    void dispose_time(int dispose_time);
+    void arrival_time(double arrival_time);
+    void service_time(double service_time);
+    void dispose_time(double dispose_time);
+    void changed_server(bool changed_server);
+
+    Type type() const;
+    bool changed_server() const;
+    double arrival_time() const;
+    double service_time() const;
+    double dispose_time() const;
+
+    bool disposed() const;
+    void disposed(bool disposed);
 
 private:
     Type type_;
-    int arrival_time_;
-    int service_time_;
-    int dispose_time_;
-
+    double arrival_time_;
+    double service_time_;
+    double dispose_time_;
+    bool changed_server_;
+    bool disposed_;
 };
 
 #endif //ENTITY_H

@@ -11,7 +11,7 @@ double RandomFunctionsData::random_value()
 {
     double random_value;
     std::default_random_engine generator;
-    switch (type()) {
+    switch (this->type()) {
     case CONSTANT:
     {
         random_value = args().at(0);

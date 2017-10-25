@@ -19,11 +19,20 @@ public:
     void config_initial_state();
     void create_initial_events();
     void process_events();
+    void resume();
+    void reset();
+    void new_run();
+    void run();
+    void refresh_data();
+    void print_data();
     void add_event(std::shared_ptr<Event> event);
     std::vector<double> extract_tec_entity_args(Entity::Type entity_type, RandomFunctionsData::Type function_type);
     std::vector<double> extract_ts_server_args(Server::Type server_type, RandomFunctionsData::Type function_type);
     std::vector<double> extract_tef_server_args(Server::Type server_type, RandomFunctionsData::Type function_type);
     std::vector<double> extract_tf_server_args(Server::Type server_type, RandomFunctionsData::Type function_type);
+
+    void paused(bool paused);
+    void stopped(bool stopped);
 
 private:
     static SystemController* instance_;
@@ -36,7 +45,12 @@ private:
     std::unique_ptr<RandomFunctionsData> tec_function_entity_1_;
     std::unique_ptr<RandomFunctionsData> tec_function_entity_2_;
 
-    int clock_;
+    double clock_;
+
+    bool paused_ = false;
+    bool stopped_ = false;
+
+    double simulation_time_;
 
     Ui::MainWindow* ui_;
 };

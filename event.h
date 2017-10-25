@@ -15,15 +15,17 @@ public:
         ENTITY_DISPOSE
     };
 
-    Event(Type type, int time, std::shared_ptr<Entity> entity, std::shared_ptr<Server> server);
+    Event(Type type, double time, std::shared_ptr<Entity> entity, std::shared_ptr<Server> server);
     Type type() const;
-    int time() const;
+    double time() const;
     std::shared_ptr<Entity> entity() const;
     std::shared_ptr<Server> server() const;
+    void server(const std::shared_ptr<Server> &server);
+    void time(double time);
 
 private:
     Type type_;
-    int time_;
+    double time_;
     std::shared_ptr<Entity> entity_;
     std::shared_ptr<Server> server_;
 };

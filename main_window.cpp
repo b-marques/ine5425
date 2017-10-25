@@ -4,6 +4,7 @@
 #include "main_window.h"
 #include "ui_main_window.h"
 #include "random_functions_data.h"
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -11,6 +12,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle(QString("Modelagem e Simulação - T1"));
+    ui->pause_simulation_button->setEnabled(false);
+    ui->stop_simulation_button->setEnabled(false);
+    ui->pause_simulation_button->setIcon(QIcon(QPixmap (":/pause-icon.png")));
+    ui->start_simulation_button->setIcon(QIcon(QPixmap (":/play-icon.png")));
+    ui->stop_simulation_button->setIcon(QIcon(QPixmap (":/stop-icon.png")));
+
     system_controller_ = SystemController::instance();
 }
 
@@ -62,4 +69,21 @@ void MainWindow::on_cmb_box_tf_server_2_activated(int index)
 void MainWindow::on_start_simulation_button_clicked()
 {
     system_controller_->start(ui);
+}
+
+
+void MainWindow::on_stop_simulation_button_clicked()
+{
+    system_controller_->stopped(true);
+}
+
+#include <iostream>
+void MainWindow::on_pause_simulation_button_clicked()
+{
+    system_controller_->paused(true);
+}
+
+void MainWindow::on_delay_slider_valueChanged(int value)
+{
+    ui->delay_label->setText("Delay (" + QString::number(value) + "ms):");
 }

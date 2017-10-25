@@ -33,6 +33,10 @@ private slots:
     void on_cmb_box_tf_server_1_activated(int index);
     void on_cmb_box_tf_server_2_activated(int index);
     void on_start_simulation_button_clicked();
+    void on_stop_simulation_button_clicked();
+    void on_pause_simulation_button_clicked();
+
+    void on_delay_slider_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;
