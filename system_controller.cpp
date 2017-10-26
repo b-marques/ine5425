@@ -138,13 +138,33 @@ void SystemController::refresh_data()
     entities_not_processed = entities_1_not_processed + entities_2_not_processed;
 
     // Server infos
-    double down_time_server_1 = server_.at(0)->down_time();
+    double down_time_server_1 = 0;
+    for(uint i = 1; i < server_.at(0)->down_time_history().size(); ++i){
+        if(i % 2 == 0){
+            down_time_server_1 += server_.at(0)->down_time_history().at(i) - server_.at(0)->down_time_history().at(i-1);
+        }
+    }
+    if(server_.at(0)->down_time_history().size() % 2 == 0 && server_.at(0)->down_time_history().size() != 0){ // Número par de evento
+        down_time_server_1 += clock_ - server_.at(0)->down_time_history().back();
+    }
     server_.at(0)->failures_number();
-    double percent_time_spent_in_failure_1 = down_time_server_1/clock_ * 100;
+    double percent_time_spent_in_failure_1 = (clock_ == 0) ? 0 : down_time_server_1/ clock_ * 100;
 
-    double down_time_server_2 = server_.at(1)->down_time();
+
+    double down_time_server_2 = 0;
+    for(uint i = 1; i < server_.at(1)->down_time_history().size(); ++i){
+        if(i % 2 == 0){
+            down_time_server_2 += server_.at(1)->down_time_history().at(i) - server_.at(1)->down_time_history().at(i-1);
+        }
+    }
+    if(server_.at(1)->down_time_history().size() % 2 == 0 && server_.at(1)->down_time_history().size() != 0){ // Número par de evento
+        down_time_server_2 += clock_ - server_.at(1)->down_time_history().back();
+    }
     server_.at(1)->failures_number();
-    double percent_time_spent_in_failure_2 = down_time_server_2/clock_ * 100;
+    double percent_time_spent_in_failure_2 = (clock_ == 0) ? 0 : down_time_server_2/ clock_ * 100;
+
+    std::cout << "clock: " << clock_ << std::endl;
+    std::cout << "down_time_server_2: " << down_time_server_2 << std::endl;
 
     server_.at(0)->average_queue_size();
     server_.at(1)->average_queue_size();
@@ -155,7 +175,7 @@ void SystemController::refresh_data()
             server_1_working_time += server_.at(0)->available_history().at(i) - server_.at(0)->available_history().at(i-1) ;
         }
     }
-    if(server_.at(0)->available_history().size() % 2 != 0){ // Número ímpar de evento
+    if(server_.at(0)->available_history().size() % 2 != 0 && server_.at(0)->available_history().size() != 0){ // Número ímpar de evento
         server_1_working_time += clock_ - server_.at(0)->available_history().back();
     }
     server_1_working_time -= server_.at(0)->fail_time_in_working();
@@ -166,7 +186,7 @@ void SystemController::refresh_data()
             server_2_working_time += server_.at(1)->available_history().at(i) - server_.at(1)->available_history().at(i-1) ;
         }
     }
-    if(server_.at(1)->available_history().size() % 2 != 0){ // Número ímpar de evento
+    if(server_.at(1)->available_history().size() % 2 != 0 && server_.at(1)->available_history().size() != 0){ // Número ímpar de evento
         server_2_working_time += clock_ - server_.at(1)->available_history().back();
     }
     server_2_working_time -= server_.at(1)->fail_time_in_working();
@@ -179,8 +199,8 @@ void SystemController::refresh_data()
     ui_->average_queue_size_1->setText(QString::number(server_.at(0)->average_queue_size()));
     ui_->average_queue_size_2->setText(QString::number(server_.at(1)->average_queue_size()));
 
-    ui_->server_1_working->setText(QString::number(server_1_ocupation));
-    ui_->server_2_working->setText(QString::number(server_2_ocupation));
+    ui_->server_1_working->setText(QString::number(server_1_ocupation) + "%");
+    ui_->server_2_working->setText(QString::number(server_2_ocupation) + "%");
 
     ui_->average_time_spent_in_queue->setText(QString::number(average_time_spent_in_queue));
 
@@ -352,18 +372,21 @@ void SystemController::process_events()
     }
     case Event::TEF_SERVER:
     {
+        double random_value = event->server()->tef_function()->random_value();
         event->server()->up(true);
-        add_event(std::make_shared<Event>(Event(Event::TF_SERVER, event->time() + event->server()->tef_function()->random_value(), nullptr, event->server())));
+        event->server()->down_time_history().push_back(event->time());
+        add_event(std::make_shared<Event>(Event(Event::TF_SERVER, event->time() + random_value, nullptr, event->server())));
         break;
     }
     case Event::TF_SERVER:
     {
         double random_value = event->server()->tf_function()->random_value();
         event->server()->up(false);
+        // ---- REVIEW -----
         if(!event->server()->available()){
             event->server()->fail_time_in_working(event->server()->fail_time_in_working() + random_value);
         }
-        event->server()->down_time(event->server()->down_time() + random_value);
+        event->server()->down_time_history().push_back(event->time());
         event->server()->failures_number(event->server()->failures_number() + 1);
 
         for(auto calendar_event : calendar_){

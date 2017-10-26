@@ -4,7 +4,6 @@ Server::Server(Type type) :
     type_(type),
     up_(true),
     failures_number_(0),
-    down_time_(0),
     fail_time_in_working_(0)
 {
 }
@@ -44,11 +43,11 @@ void Server::reset(std::shared_ptr<RandomFunctionsData> ts_function,
     tef_function_ = tef_function;
     waiting_queue_.clear();
     failures_number_ = 0;
-    down_time_ = 0;
     average_queue_size_ = 0;
     last_queue_modified_time_ = 0;
 
     fail_time_in_working_ = 0;
+    down_time_history_.clear();
     available_history_.clear();
 
 }
@@ -88,16 +87,6 @@ void Server::failures_number(int failures_number)
     failures_number_ = failures_number;
 }
 
-double Server::down_time() const
-{
-    return down_time_;
-}
-
-void Server::down_time(double down_time)
-{
-    down_time_ = down_time;
-}
-
 double Server::average_queue_size() const
 {
     return average_queue_size_;
@@ -131,4 +120,9 @@ void Server::fail_time_in_working(double fail_time_in_working)
 std::vector<double>& Server::available_history()
 {
     return available_history_;
+}
+
+std::vector<double>& Server::down_time_history()
+{
+    return down_time_history_;
 }
