@@ -1,0 +1,103 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[usenames, dvipsnames]{color}
+
+\title{Manual de Usuário}
+\author{Bruno Marques \\ \& \\ Gustavo Olegário}
+\date{\today}
+
+\renewcommand*\contentsname{Índice}
+
+\begin{document}
+
+    \begin{titlepage}
+        \maketitle
+        \thispagestyle{empty}
+    \end{titlepage}
+    
+    \tableofcontents
+    \clearpage
+    \section{Sobre o programa}
+        O programa de simualção desenvolvido em uma linguagem de propósito geral,
+        tem como objetivo atender os requisitos solicitados pelo primeiro trabalho
+        da disciplina INE5425 Modelagem e Simualção, do segundo semestre de 2017.
+        O programa foi desenvolvido na linguagem C++ e é bem simples de utilizá-lo
+        como podemos observar na figura abaixo:
+        
+        \begin{center}
+          \includegraphics[scale=0.40]{foto.png}
+        \end{center}
+        
+        O programa pode ser facilmente utilizado numa máquina que esteja rodando
+        Windows. Basta que o usuário dê um duplo clique no executável que foi
+        fornecido dentro do arquivo .zip.
+    
+    \section{Como utilizar o programa}
+        Toda vez que o programa é inicializado, ele já vem os valores para cada
+        preenchidos em cada campo e as respectivas curvas, isso foi desenvolvido
+        desta forma para facilitar o teste do programa. Abaixo, há um detalhamento
+        maior de cada campo e botões:
+        
+        \subsection{Sobre as curvas}
+            Neste trabalho estão disponíveis 5 tipos de curvas para o usuário escolher o comportamento de uma variável, as quais são:
+            \begin{itemize}
+                \item Constante
+                \item Normal
+                \item Uniforme
+                \item Triangular
+                \item Exponencial
+            \end{itemize}
+            
+            Sempre que o usuário escolher uma nova curva, a interface gráfica
+            adaptará automaticamente o número de parâmetros. Utilizemos como 
+            exemplo a curva triangular. Quando ela for selecionada, a interface
+            ficará desta forma:
+            
+            \begin{center}
+                \includegraphics[scale=0.70]{foto_triangular.png}
+            \end{center}
+            
+        \subsection{Sobre os campos numéricos}
+            Como já foi dito anteriormente, os campos de numéricos já são
+            preenchidos automaticamente, mas o usuário pode alterar. O usuário
+            pode incrementar ou decrementar unitarimanete valores clicando nas
+            setas. Além disso, o usuário pode inserir valores diretamente utilizando
+            o teclado. Independentemente da notação utilizada pelo usuário, o
+            programa convertará pontos para vírgula.
+            
+        \subsection{Sobre a simulação}
+            O usuário pode selecionar o atraso que acontecerá durante a simulação.
+            Em outras palavras, qual será o atraso entre o processamento de dois
+            eventos. Quanto maior esse valor, mais fácil o usuário poderá acompanhar
+            os valores sendo atualizados. Além disso, existe uma barra de progresso,
+            para que o usuário possa supervisionar o progresso da simulação:
+            
+            \begin{center}
+                \includegraphics[scale=0.50]{foto_barra_de_carregamento.png}
+            \end{center}
+            
+        \subsection{Sobre as variáveis de simulação}
+            O usuário pode modificar as seguintes variáveis de simulação:
+            \begin{itemize}
+                \item Valor de tempo entre chegada das entidades do tipo 1
+                \item Valor de tempo entre chegada das entidades do tipo 2
+                \item Valor de tempo de serviço do servidor tipo 1 
+                \item Valor de tempo de serviço do servidor tipo 2
+                \item Valor de tempo entre falhas do servidor tipo 1
+                \item Valor de tempo entre falhas do servidor tipo 2
+                \item Valor de tempo de falha do servidor tipo 1
+                \item Valor de tempo de falha do servidor tipo 2
+            \end{itemize}
+        
+        \subsection{Sobre as variáveis de resultado}
+            Na parte inferior da janela gráfica podemos avaliar todas as variáveis
+            de resultado sendo atualizadas conforme o progresso da simulção:
+            
+            \begin{center}
+                \includegraphics[scale=0.50]{foto_variaveis.png}
+            \end{center}
+        
+\end{document}
