@@ -1,7 +1,11 @@
 #include "server.h"
 
 Server::Server(Type type) :
-    type_(type), up_(true), failures_number_(0), down_time_(0)
+    type_(type),
+    up_(true),
+    failures_number_(0),
+    down_time_(0),
+    fail_time_in_working_(0)
 {
 }
 
@@ -30,8 +34,8 @@ void Server::up(bool up)
 }
 
 void Server::reset(std::shared_ptr<RandomFunctionsData> ts_function,
-                   std::shared_ptr<RandomFunctionsData> tf_function,
-                   std::shared_ptr<RandomFunctionsData> tef_function)
+                   std::shared_ptr<RandomFunctionsData> tef_function,
+                   std::shared_ptr<RandomFunctionsData> tf_function)
 {
     available(true);
     up(true);
@@ -41,6 +45,12 @@ void Server::reset(std::shared_ptr<RandomFunctionsData> ts_function,
     waiting_queue_.clear();
     failures_number_ = 0;
     down_time_ = 0;
+    average_queue_size_ = 0;
+    last_queue_modified_time_ = 0;
+
+    fail_time_in_working_ = 0;
+    available_history_.clear();
+
 }
 
 std::shared_ptr<RandomFunctionsData> Server::ts_function() const
@@ -86,4 +96,39 @@ double Server::down_time() const
 void Server::down_time(double down_time)
 {
     down_time_ = down_time;
+}
+
+double Server::average_queue_size() const
+{
+    return average_queue_size_;
+}
+
+void Server::average_queue_size(double average_queue_size)
+{
+    average_queue_size_ = average_queue_size;
+}
+
+double Server::last_queue_modified_time() const
+{
+    return last_queue_modified_time_;
+}
+
+void Server::last_queue_modified_time(double last_queue_modified_time)
+{
+    last_queue_modified_time_ = last_queue_modified_time;
+}
+
+double Server::fail_time_in_working() const
+{
+    return fail_time_in_working_;
+}
+
+void Server::fail_time_in_working(double fail_time_in_working)
+{
+    fail_time_in_working_ = fail_time_in_working;
+}
+
+std::vector<double>& Server::available_history()
+{
+    return available_history_;
 }

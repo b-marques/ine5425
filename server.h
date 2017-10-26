@@ -37,6 +37,17 @@ public:
     double down_time() const;
     void down_time(double down_time);
 
+    double average_queue_size() const;
+    void average_queue_size(double average_queue_size);
+
+    double last_queue_modified_time() const;
+    void last_queue_modified_time(double last_queue_modified_time);
+
+    double fail_time_in_working() const;
+    void fail_time_in_working(double fail_time_in_working);
+
+    std::vector<double>& available_history();
+
 private:
     Type type_;
     bool up_;
@@ -44,6 +55,11 @@ private:
 
     int failures_number_;
     double down_time_;
+    double average_queue_size_;
+    double last_queue_modified_time_;
+    double fail_time_in_working_;
+
+    std::vector<double> available_history_;
 
     std::vector<std::shared_ptr<Entity>> waiting_queue_;
     std::shared_ptr<RandomFunctionsData> ts_function_;

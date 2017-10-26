@@ -85,5 +85,5 @@ void MainWindow::on_pause_simulation_button_clicked()
 
 void MainWindow::on_delay_slider_valueChanged(int value)
 {
-    ui->delay_label->setText("Delay (" + QString::number(value) + "ms):");
+    ui->delay_label->setText("Delay evento (" + QString::number(value) + "ms):");
 }

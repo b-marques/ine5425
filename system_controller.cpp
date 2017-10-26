@@ -57,30 +57,25 @@ void SystemController::new_run()
 
 void SystemController::run()
 {
-    print_data();
     while(!calendar_.empty() && !paused_ && !stopped_ && clock_ <= simulation_time_){
         process_events();
         refresh_data();
         QCoreApplication::processEvents();
+
         QThread::currentThread()->msleep(ui_->delay_slider->value());
     }
-    print_data();
 }
 
 void SystemController::refresh_data()
 {
     ui_->progress_bar->setValue((clock_/simulation_time_)*100);
-    if(clock_ > simulation_time_)
+    if(clock_ > simulation_time_) {
         ui_->progress_bar->setValue(100);
-}
+        clock_ = simulation_time_;
+        simulation_time_--; // Make run stop, and letting clock have que real simulation time
+    }
 
-void SystemController::print_data()
-{
-    //    std::cout << "Calendar size: " << calendar_.size() << std::endl;
-    //    std::cout << "Entities size: " << entities_.size() << std::endl;
-    //    std::cout << "Serve 1 queue size: " << server_.at(0)->waiting_queue().size() << std::endl;
-    //    std::cout << "Serve 2 queue size: " << server_.at(1)->waiting_queue().size() << std::endl;
-
+    // ----------------- STATISTIC DATA PRINTING ---------------------------------
     // Entities info
     int entities_quantity = 0,
             entities_1_quantity = 0,
@@ -131,7 +126,9 @@ void SystemController::print_data()
     entities_disposed = entities_1_disposed + entities_2_disposed;
     entities_change = entities_1_change + entities_2_change;
     average_time_spent_in_queue = entities_.size() == 0 ? 0 : total_time_spent_in_queue / entities_.size();
+
     entities_time_spent_on_system = entities_1_time_spent_on_system + entities_2_time_spent_on_system;
+
     average_entities_time_spent_on_system = entities_time_spent_on_system / entities_disposed;
     average_entities_1_time_spent_on_system = entities_1_time_spent_on_system / entities_1_disposed;
     average_entities_2_time_spent_on_system = entities_2_time_spent_on_system / entities_2_disposed;
@@ -140,28 +137,83 @@ void SystemController::print_data()
     entities_2_not_processed = entities_2_quantity - entities_2_disposed;
     entities_not_processed = entities_1_not_processed + entities_2_not_processed;
 
-//    std::cout << entities_quantity << std::endl;
-//    std::cout << entities_1_quantity << std::endl;
-//    std::cout << entities_2_quantity << std::endl;
-//    std::cout << entities_disposed << std::endl;
-//    std::cout << entities_1_disposed << std::endl;
-//    std::cout << entities_2_disposed << std::endl;
-//    std::cout << entities_not_processed << std::endl;
-//    std::cout << entities_1_not_processed << std::endl;
-//    std::cout << entities_2_not_processed << std::endl;
-
     // Server infos
     double down_time_server_1 = server_.at(0)->down_time();
     server_.at(0)->failures_number();
-    double percent_time_spent_in_failure_1 = down_time_server_1/simulation_time_;
+    double percent_time_spent_in_failure_1 = down_time_server_1/clock_ * 100;
 
     double down_time_server_2 = server_.at(1)->down_time();
     server_.at(1)->failures_number();
-    double percent_time_spent_in_failure_2 = down_time_server_2/simulation_time_;
+    double percent_time_spent_in_failure_2 = down_time_server_2/clock_ * 100;
 
+    server_.at(0)->average_queue_size();
+    server_.at(1)->average_queue_size();
 
+    double server_1_working_time = 0;
+    for(uint i = 0; i < server_.at(0)->available_history().size(); ++i){
+        if(i % 2 == 1){
+            server_1_working_time += server_.at(0)->available_history().at(i) - server_.at(0)->available_history().at(i-1) ;
+        }
+    }
+    if(server_.at(0)->available_history().size() % 2 != 0){ // Número ímpar de evento
+        server_1_working_time += clock_ - server_.at(0)->available_history().back();
+    }
+    server_1_working_time -= server_.at(0)->fail_time_in_working();
 
+    double server_2_working_time = 0;
+    for(uint i = 0; i < server_.at(1)->available_history().size(); ++i){
+        if(i % 2 == 1){
+            server_2_working_time += server_.at(1)->available_history().at(i) - server_.at(1)->available_history().at(i-1) ;
+        }
+    }
+    if(server_.at(1)->available_history().size() % 2 != 0){ // Número ímpar de evento
+        server_2_working_time += clock_ - server_.at(1)->available_history().back();
+    }
+    server_2_working_time -= server_.at(1)->fail_time_in_working();
 
+    double server_1_ocupation = server_1_working_time / (clock_ - (down_time_server_1) == 0 ? 1 : clock_ - (down_time_server_1)) * 100;
+    double server_2_ocupation = server_2_working_time / (clock_ - (down_time_server_2) == 0 ? 1 : clock_ - (down_time_server_2)) * 100;
+
+    // ------- FIRST COLUMN
+    ui_->clock->setText(QString::number(clock_));
+    ui_->average_queue_size_1->setText(QString::number(server_.at(0)->average_queue_size()));
+    ui_->average_queue_size_2->setText(QString::number(server_.at(1)->average_queue_size()));
+
+    ui_->server_1_working->setText(QString::number(server_1_ocupation));
+    ui_->server_2_working->setText(QString::number(server_2_ocupation));
+
+    ui_->average_time_spent_in_queue->setText(QString::number(average_time_spent_in_queue));
+
+    ui_->average_entities_time_spent_on_system->setText(QString::number(average_entities_time_spent_on_system));
+    ui_->average_entities_1_time_spent_on_system->setText(QString::number(average_entities_1_time_spent_on_system));
+    ui_->average_entities_2_time_spent_on_system->setText(QString::number(average_entities_2_time_spent_on_system));
+
+    // -------- SECOND COLUMN
+    ui_->entities_quantity->setText(QString::number(entities_quantity));
+    ui_->entities_1_quantity->setText(QString::number(entities_1_quantity));
+    ui_->entities_2_quantity->setText(QString::number(entities_2_quantity));
+
+    ui_->entities_disposed->setText(QString::number(entities_disposed));
+    ui_->entities_1_disposed->setText(QString::number(entities_1_disposed));
+    ui_->entities_2_disposed->setText(QString::number(entities_2_disposed));
+
+    ui_->entities_not_processed->setText(QString::number(entities_not_processed));
+    ui_->entities_1_not_processed->setText(QString::number(entities_1_not_processed));
+    ui_->entities_2_not_processed->setText(QString::number(entities_2_not_processed));
+
+    // --------- THIRD COLUMN
+    ui_->failures_number_server_1->setText(QString::number(server_.at(0)->failures_number()));
+    ui_->down_time_server_1->setText(QString::number(down_time_server_1));
+    ui_->percent_time_spent_in_failure_1->setText(QString::number(percent_time_spent_in_failure_1) + "%");
+
+    ui_->failures_number_server_2->setText(QString::number(server_.at(1)->failures_number()));
+    ui_->down_time_server_2->setText(QString::number(down_time_server_2));
+    ui_->percent_time_spent_in_failure_2->setText(QString::number(percent_time_spent_in_failure_2) + "%");
+
+    ui_->entities_change->setText(QString::number(entities_change));
+    ui_->entities_1_change->setText(QString::number(entities_1_change));
+    ui_->entities_2_change->setText(QString::number(entities_2_change));
+    // --------------------------------------------------------------------------
 }
 
 void SystemController::config_initial_state()
@@ -260,18 +312,30 @@ void SystemController::process_events()
     {
         if(event->server()->available() && event->server()->up()) {
             event->server()->available(false);
+            event->server()->available_history().push_back(event->time());
+
             event->entity()->service_time(event->time());
             add_event(std::make_shared<Event>(Event(Event::ENTITY_DISPOSE, event->time() + event->server()->ts_function()->random_value(), event->entity(), event->server())));
 
         } else if(!event->server()->available() && event->server()->up()) {
+            event->server()->average_queue_size(event->server()->average_queue_size() +
+                                                ((event->time() - event->server()->last_queue_modified_time())/event->time()) * event->server()->waiting_queue().size());
+            event->server()->last_queue_modified_time(event->time());
+
             event->server()->waiting_queue().push_back(event->entity());
 
         } else if(!event->server()->up()) {
             if(event->entity()->changed_server()){
                 if(event->entity()->type() == Entity::Type::ONE){
+                    event->server()->average_queue_size(event->server()->average_queue_size() +
+                                                        ((event->time() - event->server()->last_queue_modified_time())/event->time()) * event->server()->waiting_queue().size());
+                    event->server()->last_queue_modified_time(event->time());
                     server_.at(0)->waiting_queue().push_back(event->entity());
 
                 } else {
+                    event->server()->average_queue_size(event->server()->average_queue_size() +
+                                                        ((event->time() - event->server()->last_queue_modified_time())/event->time()) * event->server()->waiting_queue().size());
+                    event->server()->last_queue_modified_time(event->time());
                     server_.at(1)->waiting_queue().push_back(event->entity());
                 }
                 break;
@@ -296,6 +360,9 @@ void SystemController::process_events()
     {
         double random_value = event->server()->tf_function()->random_value();
         event->server()->up(false);
+        if(!event->server()->available()){
+            event->server()->fail_time_in_working(event->server()->fail_time_in_working() + random_value);
+        }
         event->server()->down_time(event->server()->down_time() + random_value);
         event->server()->failures_number(event->server()->failures_number() + 1);
 
@@ -312,11 +379,17 @@ void SystemController::process_events()
         event->entity()->disposed(true);
 
         if(!event->server()->waiting_queue().empty()) {
+
+            event->server()->average_queue_size(event->server()->average_queue_size() +
+                                                ((event->time() - event->server()->last_queue_modified_time())/event->time()) * event->server()->waiting_queue().size());
+            event->server()->last_queue_modified_time(event->time());
+
             event->server()->waiting_queue().front()->service_time(event->time());
             add_event(std::make_shared<Event>(Event(Event::ENTITY_DISPOSE, event->time() + event->server()->ts_function()->random_value(), event->server()->waiting_queue().front(), event->server())));
             event->server()->waiting_queue().erase(event->server()->waiting_queue().begin());
         } else {
             event->server()->available(true);
+            event->server()->available_history().push_back(event->time());
         }
         break;
     }

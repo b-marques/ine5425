@@ -24,7 +24,6 @@ public:
     void new_run();
     void run();
     void refresh_data();
-    void print_data();
     void add_event(std::shared_ptr<Event> event);
     std::vector<double> extract_tec_entity_args(Entity::Type entity_type, RandomFunctionsData::Type function_type);
     std::vector<double> extract_ts_server_args(Server::Type server_type, RandomFunctionsData::Type function_type);

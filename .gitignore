@@ -46,3 +46,6 @@ target_wrapper.*
 CMakeLists.txt.user*
 
 modelsim-t1
+modelsim-t1.pro.user
+debug
+release
