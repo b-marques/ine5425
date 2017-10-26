@@ -341,7 +341,6 @@ void SystemController::process_events()
             event->server()->average_queue_size(event->server()->average_queue_size() +
                                                 ((event->time() - event->server()->last_queue_modified_time())/event->time()) * event->server()->waiting_queue().size());
             event->server()->last_queue_modified_time(event->time());
-
             event->server()->waiting_queue().push_back(event->entity());
 
         } else if(!event->server()->up()) {
